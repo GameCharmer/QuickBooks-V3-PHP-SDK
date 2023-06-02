@@ -1,6 +1,7 @@
 <?php
 namespace QuickBooksOnline\API\Core\Configuration;
 
+use AllowDynamicProperties;
 use QuickBooksOnline\API\Security\OAuthRequestValidator;
 use QuickBooksOnline\API\Core\Http\Compression\CompressionFormat;
 use QuickBooksOnline\API\Core\Http\Serialization\SerializationFormat;
