@@ -66,6 +66,17 @@ class SyncRestHandler extends RestHandler
         return $this->httpClientInterface;
     }
 
+    /**
+     * Smashes an appropriate HttpClientInterface object back in here so we can run custom interfaces,
+     *     like our own Guzzle instance with proper logging
+     * @param HttpClientInterface $cClient
+     * @return void
+     */
+    public function setHttpClientInterface(HttpClientInterface $cClient): void
+    {
+        $this->httpClientInterface = $cClient;
+    }
+
    /**
     * Update the Service Context of the request.
     * @param ServiceContext $newServiceContext The new service context that will be used for the request
