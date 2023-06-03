@@ -57,7 +57,10 @@
             return $this->getLastResponse();
         } catch(RequestException $e){
             if($e->hasResponse()){
-                throw new SdkException("A networking error occurs during Guzzle client request:" . $e->getMessage());
+                $response = $e->getResponse();
+                $responseBodyAsString = $response->getBody()->getContents();
+
+                throw new SdkException("A networking error occurs during Guzzle client request:" . $responseBodyAsString);
             }else{
                 throw new SdkException("Network Error:" . $e->getMessage());
             }
