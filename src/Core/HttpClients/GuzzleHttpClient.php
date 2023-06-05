@@ -47,26 +47,13 @@
 
      /**
       * @inheritdoc
-      *
-      * @throws SdkException
       */
      public function makeAPICall($url, $method, array $headers, $body, $timeOut, $verifySSL){
         $this->clearResponse();
-        try {
-            $this->prepareRequest($url, $method, $headers, $body, $timeOut, $verifySSL);
-            $guzzleResponse = $this->guzzleClient->request($method, $url, $this->guzzleOpts);
-            $this->setIntuitResponse($guzzleResponse);
-            return $this->getLastResponse();
-        } catch(RequestException $e){
-            if ($e->hasResponse()) {
-                $response = $e->getResponse();
-                $responseBodyAsString = $response->getBody()->getContents();
-
-                throw new SdkException("A networking error occurs during Guzzle client request:" . $responseBodyAsString);
-            } else {
-                throw new SdkException("Network Error:" . $e->getMessage());
-            }
-        }
+        $this->prepareRequest($url, $method, $headers, $body, $timeOut, $verifySSL);
+        $guzzleResponse = $this->guzzleClient->request($method, $url, $this->guzzleOpts);
+        $this->setIntuitResponse($guzzleResponse);
+        return $this->getLastResponse();
      }
 
      /**
