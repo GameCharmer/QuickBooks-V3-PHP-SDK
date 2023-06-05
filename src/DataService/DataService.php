@@ -797,6 +797,11 @@ class DataService
         } 
 
         $httpsPostBody = $this->executeObjectSerializer($entity, $urlResource);
+
+        if(empty($httpsPostBody)) {
+            throw new \Exception('httpsPostBody is Empty!');
+        }
+
         // Builds resource Uri
         $resourceURI = implode(CoreConstants::SLASH_CHAR, array('company', $this->serviceContext->realmId, $urlResource));
 
