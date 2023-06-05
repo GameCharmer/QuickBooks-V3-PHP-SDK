@@ -47,8 +47,17 @@ class XmlObjectSerializer extends IEntitySerializer
         $php2xml = new Php2Xml(CoreConstants::PHP_CLASS_PREFIX);
         $php2xml->overrideAsSingleNamespace='http://schema.intuit.com/finance/v3';
 
-        try {
-            return $php2xml->getXml($phpObj);
+        //try {
+
+        // And here we are once again.
+        // This fucking bullshit right here
+        // The online docs show JSON for everything
+        // But we're shitting out some jank ass XML from somewhere else...
+        // Nope, goanna let the exception shine baby, w00!
+
+        return $php2xml->getXml($phpObj);
+
+            /*
         } catch (\Exception $e) {
             if(self::$IDSLogger) {
                 self::$IDSLogger->CustomLogger->Log(TraceLevel::Error, "Encountered an error parsing the batch response." . $e->getMessage());
@@ -57,6 +66,7 @@ class XmlObjectSerializer extends IEntitySerializer
             }
             return false;
         }
+            */
     }
 
     /**
