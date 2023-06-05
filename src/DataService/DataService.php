@@ -344,17 +344,6 @@ class DataService
     }
 
     /**
-     * Return the client Name used by this DataSerivce
-     * @return String the Client Name. It can be curl or GuzzleHttpClient
-     * @deprecated since version 5.0.4
-     * @see $this->getClientName()
-     */
-    public function getClinetName(){
-       return $this->getClientName();
-    }
-
-
-    /**
      * The client Name can be either 'curl', 'guzzle', or 'guzzlehttp'.
      *
      * @param String $clientName              The client Name used by the service
