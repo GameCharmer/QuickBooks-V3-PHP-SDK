@@ -228,10 +228,6 @@ class SyncRestHandler extends RestHandler
              throw new SdkException("IPP or other Call is not supported in OAuth2 Mode.");
         }
 
-        if(empty($requestBody)) {
-            throw new \Exception('requestBody is Empty!');
-        }
-
         $intuitResponse = $this->httpClientInterface->makeAPICall($requestUri, $HttpMethod, $httpHeaders,  $requestBody, null, false);
         $faultHandler = $intuitResponse->getFaultHandler();
         $this->LogAPIResponseToLog($intuitResponse->getBody(), $requestUri, $intuitResponse->getHeaders());
