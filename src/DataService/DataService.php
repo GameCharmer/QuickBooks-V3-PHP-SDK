@@ -794,12 +794,16 @@ class DataService
         $this->verifyOperationAccess($entity, __FUNCTION__);
         if ($this->isJsonOnly($entity)) {
             $this->forceJsonSerializers();
-        } 
+        }
 
         $httpsPostBody = $this->executeObjectSerializer($entity, $urlResource);
 
         if(empty($httpsPostBody)) {
-            throw new \Exception('httpsPostBody is Empty!');
+            $message  = 'httpPostBody is Empty!'.PHP_EOL;
+            $message .= 'Entity Class: '.get_class($entity).PHP_EOL;
+            $message .= 'Serializer: '.get_class($this->getRequestSerializer()).PHP_EOL;
+
+            throw new \Exception($message);
         }
 
         // Builds resource Uri
@@ -1429,7 +1433,21 @@ class DataService
      */
     protected function executeObjectSerializer($entity, &$urlResource)
     {
+        if(empty($entity)) {
+            throw new \Exception('Incoming Entity is Empty!');
+        }
+
         $result = $this->getRequestSerializer()->Serialize($entity);
+
+        if(empty($result)) {
+
+            $message  = 'Result is Empty!'.PHP_EOL;
+            $message .= 'Entity Class: '.get_class($entity).PHP_EOL;
+            $message .= 'Serializer: '.get_class($this->getRequestSerializer()).PHP_EOL;
+
+            throw new \Exception($message);
+        }
+
         $urlResource = $this->getRequestSerializer()->getResourceURL();
 
         return $result;
