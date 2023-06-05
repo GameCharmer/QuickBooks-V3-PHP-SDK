@@ -792,14 +792,9 @@ class DataService
             throw new IdsException('Argument Null Exception');
         }
         $this->verifyOperationAccess($entity, __FUNCTION__);
-        /*
         if ($this->isJsonOnly($entity)) {
             $this->forceJsonSerializers();
         }
-        */
-        // DO IT ANYWAY! The XML Parser is shot to hell
-        $this->forceJsonSerializers();
-
         $httpsPostBody = $this->executeObjectSerializer($entity, $urlResource);
 
         if(empty($httpsPostBody)) {
