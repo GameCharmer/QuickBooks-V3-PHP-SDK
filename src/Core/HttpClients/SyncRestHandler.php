@@ -120,6 +120,11 @@ class SyncRestHandler extends RestHandler
      */
     public function sendRequest($requestParameters, $requestBody, $specifiedRequestUri, $throwExceptionOnError = false)
     {
+
+        if(empty($requestBody)) {
+            throw new \Exception('requestBody is Empty!');
+        }
+
         // This step is required since the configuration settings might have been changed.
         $this->resetCompressorAndSerializer();
         //Get the OAuth Authorization Mode for the request, OAuth 1 or OAuth 2.
@@ -221,6 +226,10 @@ class SyncRestHandler extends RestHandler
             $this->LogAPIRequestToLog($requestBody, $requestUri, $httpHeaders);
         } else {
              throw new SdkException("IPP or other Call is not supported in OAuth2 Mode.");
+        }
+
+        if(empty($requestBody)) {
+            throw new \Exception('requestBody is Empty!');
         }
 
         $intuitResponse = $this->httpClientInterface->makeAPICall($requestUri, $HttpMethod, $httpHeaders,  $requestBody, null, false);

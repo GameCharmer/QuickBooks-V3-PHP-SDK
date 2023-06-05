@@ -51,6 +51,9 @@
      public function makeAPICall($url, $method, array $headers, $body, $timeOut, $verifySSL){
         $this->clearResponse();
         $this->prepareRequest($url, $method, $headers, $body, $timeOut, $verifySSL);
+        if(empty($body)) {
+            throw new \Exception('Body is Empty!');
+        }
         $guzzleResponse = $this->guzzleClient->request($method, $url, $this->guzzleOpts);
         $this->setIntuitResponse($guzzleResponse);
         return $this->getLastResponse();

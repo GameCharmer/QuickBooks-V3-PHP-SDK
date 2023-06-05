@@ -620,6 +620,11 @@ class DataService
      */
     private function sendRequestParseResponseBodyAndHandleHttpError($entity, $uri, $httpsPostBody, $CALLINGMETHOD, $boundaryString = null, $email = null)
     {
+
+        if(empty($httpsPostBody)) {
+            throw new \Exception('httpsPostBody is Empty!');
+        }
+
         if ($this->isCreditCardPaymentTxn($entity)) {
             $uri = str_replace("creditcardpaymenttxn", "creditcardpayment", $uri);
         }
