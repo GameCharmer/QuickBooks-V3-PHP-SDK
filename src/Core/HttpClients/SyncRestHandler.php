@@ -210,7 +210,7 @@ class SyncRestHandler extends RestHandler
      *
      * @return array|null Response and HTTP Status code
      */
-    private function OAuth2APICall($baseURL, $queryParameters, $HttpMethod, $requestUri, $requestParameters, $requestBody, $throwExceptionOnError){
+    public function OAuth2APICall($baseURL, $queryParameters, $HttpMethod, $requestUri, $requestParameters, $requestBody, $throwExceptionOnError){
         $AuthorizationHeader = $this->getOAuth2AuthorizationHeader($this->context->requestValidator);
         //We only support QBO for PHP SDK. No QBD support, change
         // from: if ('QBO'==$this->context->serviceType || 'QBD'==$this->context->serviceType)
