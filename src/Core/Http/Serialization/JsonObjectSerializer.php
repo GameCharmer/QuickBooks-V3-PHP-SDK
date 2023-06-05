@@ -1,4 +1,5 @@
 <?php
+
 namespace QuickBooksOnline\API\Core\Http\Serialization;
 
 use QuickBooksOnline\API\Utility\DomainEntityBuilder;
@@ -17,23 +18,23 @@ class JsonObjectSerializer extends IEntitySerializer
 {
     private $lastError = null;
 
-  /**
-  * Contains name of class which will be serialized or deserialized
-  * @var string
-  */
-  private $entityName = null;
+    /**
+     * Contains name of class which will be serialized or deserialized
+     * @var string
+     */
+    private $entityName = null;
 
     /**
      * The ids logger.
      * @var Logger IDSLogger
      */
-     private $IDSLogger;
+    private $IDSLogger;
 
     /**
      * Initializes a new instance of the JsonObjectSerializer class.
      * @param IDSLogger idsLogger The ids logger.
      */
-    public function __construct($idsLogger=null)
+    public function __construct($idsLogger = null)
     {
         if ($idsLogger) {
             $this->IDSLogger = $idsLogger;
@@ -42,122 +43,122 @@ class JsonObjectSerializer extends IEntitySerializer
         }
     }
 
-  /**
-   * Handle possible errors and react
-   * @param mixed $result
-   * @return mixed
-  */
-  private function checkResult($result)
-  {
-      $this->lastError = json_last_error();
-      if (JSON_ERROR_NONE !== $this->lastError) {
-          IdsExceptionManager::HandleException($this->getMessageFromErrorCode($this->lastError));
-      }
-            //TODO add logger here
+    /**
+     * Handle possible errors and react
+     * @param mixed $result
+     * @return mixed
+     */
+    private function checkResult($result)
+    {
+        $this->lastError = json_last_error();
+        if (JSON_ERROR_NONE !== $this->lastError) {
+            IdsExceptionManager::HandleException($this->getMessageFromErrorCode($this->lastError));
+        }
+        //TODO add logger here
         return $result;
-  }
+    }
 
-        /**
-         * Support json_last_error_msg in PHP 5.2
-         * @param string $error
-         * @return string
-         */
-        private function getMessageFromErrorCode($error)
-        {
-            if (function_exists('json_last_error_msg')) {
-                return json_last_error_msg();
-            }
-            $errors = array(
-               JSON_ERROR_NONE             => null,
-               JSON_ERROR_DEPTH            => 'Maximum stack depth exceeded',
-               JSON_ERROR_STATE_MISMATCH   => 'Underflow or the modes mismatch',
-               JSON_ERROR_CTRL_CHAR        => 'Unexpected control character found',
-               JSON_ERROR_SYNTAX           => 'Syntax error, malformed JSON',
-               JSON_ERROR_UTF8             => 'Malformed UTF-8 characters, possibly incorrectly encoded'
-           );
-            return array_key_exists($error, $errors) ? $errors[$error] : "Unknown error ({$error})";
+    /**
+     * Support json_last_error_msg in PHP 5.2
+     * @param string $error
+     * @return string
+     */
+    private function getMessageFromErrorCode($error)
+    {
+        if (function_exists('json_last_error_msg')) {
+            return json_last_error_msg();
         }
+        $errors = array(
+            JSON_ERROR_NONE => null,
+            JSON_ERROR_DEPTH => 'Maximum stack depth exceeded',
+            JSON_ERROR_STATE_MISMATCH => 'Underflow or the modes mismatch',
+            JSON_ERROR_CTRL_CHAR => 'Unexpected control character found',
+            JSON_ERROR_SYNTAX => 'Syntax error, malformed JSON',
+            JSON_ERROR_UTF8 => 'Malformed UTF-8 characters, possibly incorrectly encoded'
+        );
+        return array_key_exists($error, $errors) ? $errors[$error] : "Unknown error ({$error})";
+    }
 
-        /**
-         * Sets entity name
-         * @param string $name
-         */
-        private function setEntityName($name)
-        {
-            $this->entityName = $name;
-        }
+    /**
+     * Sets entity name
+     * @param string $name
+     */
+    private function setEntityName($name)
+    {
+        $this->entityName = $name;
+    }
 
-        /**
-         * Retrivies resoure URL (part of URL path) which extracted from domain model entity name
-         * @param string $entity
-         */
-        private function collectResourceURL($entity)
-        {
-            $this->setEntityName(strtolower(self::cleanPhpClassNameToIntuitEntityName(get_class($entity))));
-        }
+    /**
+     * Retrivies resoure URL (part of URL path) which extracted from domain model entity name
+     * @param string $entity
+     */
+    private function collectResourceURL($entity)
+    {
+        $this->setEntityName(strtolower(self::cleanPhpClassNameToIntuitEntityName(get_class($entity))));
+    }
 
-        /**
-         * Creates domain model-like name. In other words it follows naming convetion for SDK
-         * TODO make generic and remove duplicates
-         * @param string $intuitEntityName
-         * @return string
-         */
+    /**
+     * Creates domain model-like name. In other words it follows naming convetion for SDK
+     * TODO make generic and remove duplicates
+     * @param string $intuitEntityName
+     * @return string
+     */
     private static function decorateIntuitEntityToPhpClassName($intuitEntityName)
     {
         return CoreConstants::PHP_CLASS_PREFIX . $intuitEntityName;
     }
 
-        /**
-         * Converts stdClass objects into object with specified type
-         * It tries to learn type from JSON responce
-         *
-         * @param object $object
-         * @param boolean $limitToOne
-         * @return mixed (stdClass or domain model entity)
-         */
-        private function convertObject($object, $limitToOne)
-        {
-            if ($object instanceof \stdClass) {
-                $result = array();
-                $vars = get_object_vars($object);
-                if (empty($vars)) {
-                    return null;
-                }
-                foreach ($vars as $key=>$value) {
-                    $className = self::decorateIntuitEntityToPhpClassName($key);
-                    if (!class_exists($className)) {
-                        continue;
-                    }
-                    $entity = DomainEntityBuilder::create($className, $value);
-
-                    if ($limitToOne) {
-                        return $entity;
-                    }
-                    $result[] = $entity;
-                }
-                if (empty($result)) {
-                    // Reutrn original parsed object and don't try to convert types
-                    return $limitToOne ? $object : array($object);
-                } else {
-                    return $result;
-                }
+    /**
+     * Converts stdClass objects into object with specified type
+     * It tries to learn type from JSON responce
+     *
+     * @param object $object
+     * @param boolean $limitToOne
+     * @return mixed (stdClass or domain model entity)
+     */
+    private function convertObject($object, $limitToOne)
+    {
+        if ($object instanceof \stdClass) {
+            $result = array();
+            $vars = get_object_vars($object);
+            if (empty($vars)) {
+                return null;
             }
+            foreach ($vars as $key => $value) {
+                $className = self::decorateIntuitEntityToPhpClassName($key);
+                if (!class_exists($className)) {
+                    continue;
+                }
+                $entity = DomainEntityBuilder::create($className, $value);
 
-            return $object;
+                if ($limitToOne) {
+                    return $entity;
+                }
+                $result[] = $entity;
+            }
+            if (empty($result)) {
+                // Reutrn original parsed object and don't try to convert types
+                return $limitToOne ? $object : array($object);
+            } else {
+                return $result;
+            }
         }
 
-        /**
-         * Returns path of URL which represent requested resource
-         * @override
-         * @return String
-         */
-        public function getResourceURL()
-        {
-            return $this->entityName;
-        }
+        return $object;
+    }
+
+    /**
+     * Returns path of URL which represent requested resource
+     * @override
+     * @return String
+     */
+    public function getResourceURL()
+    {
+        return $this->entityName;
+    }
 
 
-        /**
+    /**
      * Serializes the specified entity.
      * @param object entity The entity
      * @return string Returns the serialize entity in string format.
@@ -170,25 +171,45 @@ class JsonObjectSerializer extends IEntitySerializer
         return $this->checkResult(json_encode($array, true));
     }
 
-    private function customerConvertObjectToArray($obj){
-      if(is_object($obj)) $obj = (array) $obj;
-      if(is_array($obj)) {
-        $new = array();
-        foreach($obj as $key => $val) {
-          $new[$key] = $this->customerConvertObjectToArray($val);
+    /**
+     * Why bother to note things, use the same case, etc.
+     *
+     * @param $obj
+     * @return array|mixed
+     */
+    private function customerConvertObjectToArray($obj)
+    {
+        // If this is an object, try to cast as an array.
+        if (is_object($obj)) {
+            $arr = (array) $obj;
+
+            if(empty($arr)) {
+                $arr = get_object_vars($obj);
+            }
+
+            return $arr;
         }
-      }
-      else $new = $obj;
-      return $new;
+
+        if (is_array($obj)) {
+            $new = [];
+            foreach ($obj as $key => $val) {
+                $new[$key] = $this->customerConvertObjectToArray($val);
+            }
+            return $new;
+        }
+
+        return $obj;    // If it's not an array, just return it because fuck it, why the fuck not
     }
+
     /**
      * This method is meant to be used as an array_filter callback to remove array elements that
      * "have no content".
-     * 
+     *
      * @return bool Returns true if the input value is NOT NULL and is NOT an empty string
      *              Returns false if the input IS NULL or IS AN EMPTY STRING
      */
-    private static function valueIsNotNullOrEmptyString($value) {
+    private static function valueIsNotNullOrEmptyString($value)
+    {
         return !(is_null($value) || ("" === $value));
     }
 
@@ -196,21 +217,22 @@ class JsonObjectSerializer extends IEntitySerializer
      * The input will always be an associative array
      * So we will judge based on these two situations
      */
-    private function removeNullProperties($val){
+    private function removeNullProperties($val)
+    {
         $filterArray = array_filter($val, [self::class, 'valueIsNotNullOrEmptyString']);
         $returned = array();
-        foreach($filterArray as $k => $v){
-          if(is_array($v)){
-            if(FacadeHelper::isRecurrsiveArray($v)){
-              $list = array();
-              foreach($v as $kk => $vv){
-                  $list[] = array_filter($vv, [self::class, 'valueIsNotNullOrEmptyString']);
-              }
-              $returned[$k] = $list;
+        foreach ($filterArray as $k => $v) {
+            if (is_array($v)) {
+                if (FacadeHelper::isRecurrsiveArray($v)) {
+                    $list = array();
+                    foreach ($v as $kk => $vv) {
+                        $list[] = array_filter($vv, [self::class, 'valueIsNotNullOrEmptyString']);
+                    }
+                    $returned[$k] = $list;
+                }
+            } else {
+                $returned[$k] = $v;
             }
-          }else{
-            $returned[$k] = $v;
-          }
         }
         return $returned;
     }
@@ -223,6 +245,6 @@ class JsonObjectSerializer extends IEntitySerializer
     public function Deserialize($message, $limitToOne = false)
     {
         return $this->convertObject($this->checkResult(json_decode($message)),
-                                         $limitToOne);
+            $limitToOne);
     }
 }
