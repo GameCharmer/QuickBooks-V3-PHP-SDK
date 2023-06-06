@@ -52,8 +52,8 @@ class Php2Xml extends Common
     /**
      * __construct
      *
-     * @param string  $classPrefix Prefix for generated class names
-     * @param string  $phpClass
+     * @param string $classPrefix Prefix for generated class names
+     * @param string $phpClass
      *
      * @return void
      */
@@ -94,7 +94,7 @@ class Php2Xml extends Common
                 $code = $this->getNsCode($data['xmlNamespace']);
                 foreach ($data['value'] as $arrEl) {
                     //@todo fix this workaroung. it's only works for one level array
-                    $dom = $this->dom->createElement($code.":".$elName[0]);
+                    $dom = $this->dom->createElement($code . ":" . $elName[0]);
                     $this->parseObjectValue($arrEl, $dom);
                     $this->root->appendChild($dom);
                 }
@@ -138,28 +138,36 @@ class Php2Xml extends Common
 
     private function parseClass($object, $dom, $rt = false)
     {
+        d($object);
+        d($dom);
+        d($rt);
+
         $refl = new \ReflectionClass($object);
         $docs = $this->parseDocComments($refl->getDocComment());
 
+        d($refl);
+        d($docs);
+
         if (($this->overrideAsSingleNamespace) && ($docs['xmlNamespace'] == '')) {
-            $docs['xmlNamespace']=$this->overrideAsSingleNamespace;
+            $docs['xmlNamespace'] = $this->overrideAsSingleNamespace;
         }
 
         if ($docs['xmlNamespace'] != '') {
 
             // Xml name needs to strip class prefix during parse
-            if ($this->classPrefix && (0==strpos($docs['xmlName'], $this->classPrefix))) {
+            if ($this->classPrefix && (0 == strpos($docs['xmlName'], $this->classPrefix))) {
                 $docs['xmlName'] = substr($docs['xmlName'], strlen($this->classPrefix));
             }
 
-            $code = '';
             if (is_object($this->root)) { // root initialized
                 $code = $this->getNsCode($docs['xmlNamespace']);
-                $root = $this->dom->createElement($code.":".$docs['xmlName']);
+                $root = $this->dom->createElement($code . ":" . $docs['xmlName']);
             } else { // creating root element
                 $code = $this->getNsCode($docs['xmlNamespace'], true);
-                $root = $this->dom->createElementNS($docs['xmlNamespace'], $code.":".$docs['xmlName']);
+                $root = $this->dom->createElementNS($docs['xmlNamespace'], $code . ":" . $docs['xmlName']);
             }
+
+            d($code, $root);
 
             $dom->appendChild($root);
         } else {
@@ -188,8 +196,10 @@ class Php2Xml extends Common
         $correctMemberOrder = $this->get_class_vars_fix_order(get_class($object));
         $correctMemberOrder = array_flip($correctMemberOrder);
         foreach ($propDocs as $key => $val) {
-            $correctMemberOrder[$key]=$val;
+            $correctMemberOrder[$key] = $val;
         }
+
+        d($correctMemberOrder);
 
         return $correctMemberOrder;
     }
@@ -204,7 +214,6 @@ class Php2Xml extends Common
     }
 
 
-
     private function addProperty($docs, $dom)
     {
         if (isset($docs['value'])) {
@@ -212,7 +221,7 @@ class Php2Xml extends Common
 
             if (array_key_exists('xmlNamespace', $docs)) {
                 $code = $this->getNsCode($docs['xmlNamespace']);
-                $el = $this->dom->createElement($code.":".$docs['xmlName']);
+                $el = $this->dom->createElement($code . ":" . $docs['xmlName']);
             } else {
                 $el = $this->dom->createElement($docs['xmlName']);
             }
@@ -220,7 +229,7 @@ class Php2Xml extends Common
             // SDK-78
             // converts numbers into string representation from any numeric
             if (is_numeric($docs['value'])) {
-                $docs['value'] = (string) $docs['value'];
+                $docs['value'] = (string)$docs['value'];
             }
             //
 
@@ -236,7 +245,7 @@ class Php2Xml extends Common
                     $el = $atr;
                 } elseif (array_key_exists('xmlNamespace', $docs)) {
                     $code = $this->getNsCode($docs['xmlNamespace']);
-                    $el = $this->dom->createElement($code.":".$docs['xmlName'], htmlspecialchars($docs['value'], ENT_QUOTES, 'UTF-8'));
+                    $el = $this->dom->createElement($code . ":" . $docs['xmlName'], htmlspecialchars($docs['value'], ENT_QUOTES, 'UTF-8'));
                 } else {
                     $el = $this->dom->createElement($docs['xmlName'], $docs['value']);
                 }
@@ -259,11 +268,11 @@ class Php2Xml extends Common
      */
     private function parseObjectValue($obj, $element)
     {
-        $this->logger->debug("Start with:".$element->getNodePath());
+        $this->logger->debug("Start with:" . $element->getNodePath());
 
         $refl = new \ReflectionClass($obj);
 
-        $classDocs  = $this->parseDocComments($refl->getDocComment());
+        $classDocs = $this->parseDocComments($refl->getDocComment());
         $classProps = $refl->getProperties();
         $namespace = $classDocs['xmlNamespace'];
         foreach ($classProps as $prop) {
@@ -276,7 +285,7 @@ class Php2Xml extends Common
                 //print($propDocs['xmlName']."\n");
                 if (array_key_exists('xmlNamespace', $propDocs)) {
                     $code = $this->getNsCode($propDocs['xmlNamespace']);
-                    $el = $this->dom->createElement($code.":".$propDocs['xmlName']);
+                    $el = $this->dom->createElement($code . ":" . $propDocs['xmlName']);
                     $el = $this->parseObjectValue($prop->getValue($obj), $el);
                 } else {
                     $el = $this->dom->createElement($propDocs['xmlName']);
@@ -299,21 +308,21 @@ class Php2Xml extends Common
                         if (is_array($value)) {
 
                             // Strip the class prefix, if one exists
-                            if ($this->classPrefix && (0===strpos($propDocs['xmlName'], $this->classPrefix))) {
+                            if ($this->classPrefix && (0 === strpos($propDocs['xmlName'], $this->classPrefix))) {
                                 $propDocs['xmlName'] = substr($propDocs['xmlName'], strlen($this->classPrefix));
                             }
 
-                            $this->logger->debug("Creating element:".$code.":".$propDocs['xmlName']);
+                            $this->logger->debug("Creating element:" . $code . ":" . $propDocs['xmlName']);
                             $this->logger->debug(print_r($value, true));
                             foreach ($value as $node) {
                                 $this->logger->debug(print_r($node, true));
-                                $el = $this->dom->createElement($code.":".$propDocs['xmlName']);
+                                $el = $this->dom->createElement($code . ":" . $propDocs['xmlName']);
                                 $arrNode = $this->parseObjectValue($node, $el);
                                 $element->appendChild($arrNode);
                             }
                         } else {
                             //SDK-39
-                            $el = $this->dom->createElement($code.":".$propDocs['xmlName'], htmlspecialchars($value));
+                            $el = $this->dom->createElement($code . ":" . $propDocs['xmlName'], htmlspecialchars($value));
                             $element->appendChild($el);
                         }
                         //print_r("Added element ".$propDocs['xmlName']." with NS = ".$propDocs['xmlNamespace']." \n");
@@ -348,15 +357,15 @@ class Php2Xml extends Common
 
     /**
      * Cast numeric empty value to string
-     * @see SDK-78
      * @param ReflectionProperty $prop
      * @param Object $obj
+     * @see SDK-78
      */
     private function castToStringZero($prop, $obj)
     {
         if ($this->isEmptyInt($prop->getValue($obj))) {
             //reset value in very specific case to keep it intact
-            $prop->setValue($obj, (string) $prop->getValue($obj));
+            $prop->setValue($obj, (string)$prop->getValue($obj));
         }
     }
 }
