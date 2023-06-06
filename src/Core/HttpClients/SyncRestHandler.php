@@ -120,11 +120,6 @@ class SyncRestHandler extends RestHandler
      */
     public function sendRequest($requestParameters, $requestBody, $specifiedRequestUri, $throwExceptionOnError = false)
     {
-
-        if(empty($requestBody)) {
-            throw new \Exception('requestBody is Empty!');
-        }
-
         // This step is required since the configuration settings might have been changed.
         $this->resetCompressorAndSerializer();
         //Get the OAuth Authorization Mode for the request, OAuth 1 or OAuth 2.
