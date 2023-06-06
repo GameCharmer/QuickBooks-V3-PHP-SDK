@@ -141,10 +141,6 @@ class Php2Xml extends Common
 
     private function parseClass($object, $dom, $rt = false)
     {
-        d($object);
-        d($dom);
-        d($rt);
-
         $refl = new \ReflectionClass($object);
         $docs = $this->parseDocComments($refl->getDocComment());
 
