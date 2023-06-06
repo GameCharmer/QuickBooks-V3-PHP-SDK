@@ -144,9 +144,6 @@ class Php2Xml extends Common
         $refl = new \ReflectionClass($object);
         $docs = $this->parseDocComments($refl->getDocComment());
 
-        d($refl);
-        d($docs);
-
         if (($this->overrideAsSingleNamespace) && ($docs['xmlNamespace'] == '')) {
             $docs['xmlNamespace'] = $this->overrideAsSingleNamespace;
         }
@@ -165,8 +162,6 @@ class Php2Xml extends Common
                 $code = $this->getNsCode($docs['xmlNamespace'], true);
                 $root = $this->dom->createElementNS($docs['xmlNamespace'], $code . ":" . $docs['xmlName']);
             }
-
-            d($code, $root);
 
             $dom->appendChild($root);
         } else {
@@ -197,8 +192,6 @@ class Php2Xml extends Common
         foreach ($propDocs as $key => $val) {
             $correctMemberOrder[$key] = $val;
         }
-
-        d($correctMemberOrder);
 
         return $correctMemberOrder;
     }
