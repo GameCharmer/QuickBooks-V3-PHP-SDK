@@ -29,6 +29,7 @@ use QuickBooksOnline\API\Core\CoreConstants;
  * @author Mike Bevz <myb@mikebevz.com>
  * @version 0.0.4
  */
+#[\AllowDynamicProperties]
 class Php2Xml extends Common
 {
     /**
@@ -43,6 +44,8 @@ class Php2Xml extends Common
      * @var DOMElement
      */
     private $root;
+
+    private $rootNsName;
 
 
     protected $rootTagName;
