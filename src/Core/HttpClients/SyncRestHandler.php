@@ -67,12 +67,10 @@ class SyncRestHandler extends RestHandler
     }
 
     /**
-     * Smashes an appropriate HttpClientInterface object back in here so we can run custom interfaces,
-     *     like our own Guzzle instance with proper logging
      * @param HttpClientInterface $cClient
      * @return void
      */
-    public function setHttpClientInterface(HttpClientInterface $cClient): void
+    public function setHttpClientInterface(HttpClientInterface $cClient)
     {
         $this->httpClientInterface = $cClient;
     }
@@ -210,7 +208,7 @@ class SyncRestHandler extends RestHandler
      *
      * @return array|null Response and HTTP Status code
      */
-    public function OAuth2APICall($baseURL, $queryParameters, $HttpMethod, $requestUri, $requestParameters, $requestBody, $throwExceptionOnError){
+    private function OAuth2APICall($baseURL, $queryParameters, $HttpMethod, $requestUri, $requestParameters, $requestBody, $throwExceptionOnError){
         $AuthorizationHeader = $this->getOAuth2AuthorizationHeader($this->context->requestValidator);
         //We only support QBO for PHP SDK. No QBD support, change
         // from: if ('QBO'==$this->context->serviceType || 'QBD'==$this->context->serviceType)
