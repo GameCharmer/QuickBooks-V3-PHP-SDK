@@ -34,9 +34,9 @@
 
      /**
       * Constructor for GuzzleHttpClient
-      * @param Client guzzleClient passed to the constructor
+      * @param Client|null guzzleClient passed to the constructor
       */
-     public function __construct(Client $guzzleClient = null){
+     public function __construct(?Client $guzzleClient = null){
         if(isset($guzzleClient)){
             $this->guzzleClient = $guzzleClient;
         }else{

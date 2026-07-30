@@ -3,15 +3,16 @@ namespace QuickBooksOnline\API\Data;
 
 /**
  * @xmlNamespace http://schema.intuit.com/finance/v3
- * @xmlType string
- * @xmlName IPPSyncErrorType
- * @var IPPSyncErrorType
+ * @xmlType 
+ * @xmlName IPPTxnRetainageDetail
+ * @var IPPTxnRetainageDetail
  * @xmlDefinition 
-                Product: QBW
-                Description: must be either of the following values
-            
+				Product: QBO
+				Description: Details of retainage on the
+				transaction as a whole.
+			
  */
-class IPPSyncErrorType
+class IPPTxnRetainageDetail
 	{
 
 		/**                                                                       
@@ -27,7 +28,7 @@ class IPPSyncErrorType
 		{
 			foreach($keyValInitializers as $initPropName => $initPropVal)
 			{
-				if (property_exists('IPPSyncErrorType',$initPropName) || property_exists('QuickBooksOnline\API\Data\IPPSyncErrorType',$initPropName))
+				if (property_exists('IPPTxnRetainageDetail',$initPropName) || property_exists('QuickBooksOnline\API\Data\IPPTxnRetainageDetail',$initPropName))
 				{
 					$this->{$initPropName} = $initPropVal;
 				}
@@ -39,10 +40,35 @@ class IPPSyncErrorType
 			}
 		}
 
-		/**
-		 * @xmlType value
-		 * @var string
-		 */
-		public $value;
+	
+	/**
+	 * @Definition 
+						Product: QBO
+						Description: Total retainage amount
+						on the transaction.
+					
+	 * @xmlType element
+	 * @xmlNamespace http://schema.intuit.com/finance/v3
+	 * @xmlMinOccurs 0
+	 * @xmlName RetainageAmount
+	 * @var float
+	 */
+	public $RetainageAmount;
+	/**
+	 * @Definition 
+						Product: QBO
+						Description: Outstanding retainage
+						balance on the transaction.
+						Decreases as retainage is released.
+						InputType: ReadOnly
+					
+	 * @xmlType element
+	 * @xmlNamespace http://schema.intuit.com/finance/v3
+	 * @xmlMinOccurs 0
+	 * @xmlName RetainageOpenBalance
+	 * @var float
+	 */
+	public $RetainageOpenBalance;
 
-} // end class IPPSyncErrorType
+
+} // end class IPPTxnRetainageDetail
